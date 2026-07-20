@@ -1,0 +1,42 @@
+# Byte-compiled / Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# PyInstaller build & dist output directories
+build/
+dist/
+*.manifest
+
+# Executable binaries & third-party tools
+ffmpeg.exe
+ffprobe.exe
+yt-dlp.exe
+*.exe
+*.zip
+*.7z
+*.tar.gz
+
+# Downloaded media files
+*.mp3
+*.mp4
+*.webm
+*.m4a
+*.mkv
+*.flv
+*.avi
+*.wav
+
+# Windows shortcuts & system files
+*.lnk
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Virtual environment & IDE settings
+.venv/
+venv/
+env/
+.vscode/
+.idea/
+.env
