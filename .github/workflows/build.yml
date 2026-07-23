@@ -1,10 +1,12 @@
-name: Build Applications
+name: Build & Release Applications
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
+    tags:
+      - 'v*'
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "master" ]
   workflow_dispatch:
 
 jobs:
@@ -31,7 +33,7 @@ jobs:
           cd android
           ./gradlew assembleDebug
 
-      - name: Upload Android APK
+      - name: Upload Android APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: YT-Downloader-Mobile-APK
@@ -57,8 +59,46 @@ jobs:
         run: |
           pyinstaller --noconfirm yd_app.spec
 
-      - name: Upload Windows Executable
+      - name: Upload Windows Executable Artifact
         uses: actions/upload-artifact@v4
         with:
           name: YT-Downloader-Windows-EXE
           path: dist/yd_app.exe
+
+  create-release:
+    name: Create GitHub Release
+    needs: [build-android, build-windows]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/')
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download Android Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: YT-Downloader-Mobile-APK
+          path: release-files/
+
+      - name: Download Windows Artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: YT-Downloader-Windows-EXE
+          path: release-files/
+
+      - name: Rename files for release
+        run: |
+          mv release-files/app-debug.apk release-files/YTDownloader-Mobile.apk
+          mv release-files/yd_app.exe release-files/YTDownloader-Windows.exe
+
+      - name: Create or Update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: latest
+          name: Latest Release (Automated Build)
+          draft: false
+          prerelease: false
+          files: |
+            release-files/YTDownloader-Mobile.apk
+            release-files/YTDownloader-Windows.exe
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
