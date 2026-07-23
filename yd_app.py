@@ -98,6 +98,10 @@ def download_mp4_opus():
         url
     ]
 
+    referer = referer_entry.get().strip()
+    if referer:
+        cmd.extend(["--referer", referer])
+
     start_download(cmd, "MP4 Downloaded (Best Quality - Opus)!")
 
 
@@ -117,6 +121,10 @@ def download_mp4_compatible():
         "-o", outtmpl,
         url
     ]
+
+    referer = referer_entry.get().strip()
+    if referer:
+        cmd.extend(["--referer", referer])
 
     start_download(cmd, "MP4 Downloaded (Compatible - AAC)!")
 
@@ -139,6 +147,10 @@ def download_mp3():
         url
     ]
 
+    referer = referer_entry.get().strip()
+    if referer:
+        cmd.extend(["--referer", referer])
+
     start_download(cmd, "MP3 Downloaded!")
 
 
@@ -148,12 +160,16 @@ def open_folder():
 
 root = tk.Tk()
 root.title("YT Downloader")
-root.geometry("600x240")
+root.geometry("600x310")
 root.resizable(False, False)
 
 tk.Label(root, text="Video URL:").pack(pady=(12, 0))
 url_entry = tk.Entry(root, width=85)
 url_entry.pack(pady=6, padx=12)
+
+tk.Label(root, text="Referer URL (Optional):").pack(pady=(2, 0))
+referer_entry = tk.Entry(root, width=85)
+referer_entry.pack(pady=6, padx=12)
 
 # First row of buttons
 btn_frame1 = tk.Frame(root)

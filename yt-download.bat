@@ -6,6 +6,13 @@ echo       Simple Downloader
 echo ==============================
 
 set /p URL=Paste video URL: 
+set /p REFERER=Paste Referer URL (optional, press Enter to skip): 
+
+if not "%REFERER%"=="" (
+    set REFERER_ARG=--referer "%REFERER%"
+) else (
+    set REFERER_ARG=
+)
 
 echo.
 echo 1) MP4 - Best Quality (Opus codec - VLC only, NOT WMP)
@@ -28,6 +35,7 @@ echo Use VLC or another modern player.
 echo.
 yt-dlp.exe -f "bestvideo+bestaudio/best" ^
  --merge-output-format mp4 ^
+ %REFERER_ARG% ^
  -o "%CD%\%%(title)s.%%(ext)s" "%URL%"
 echo.
 echo MP4 saved.
@@ -40,6 +48,7 @@ echo This will work with Windows Media Player.
 echo.
 yt-dlp.exe -f "bestvideo[ext=mp4]+bestaudio[ext=m4a]/best[ext=mp4]/best" ^
  --merge-output-format mp4 ^
+ %REFERER_ARG% ^
  -o "%CD%\%%(title)s.%%(ext)s" "%URL%"
 echo.
 echo MP4 saved.
@@ -49,6 +58,7 @@ exit
 :mp3
 echo Downloading MP3...
 yt-dlp.exe -f bestaudio --extract-audio --audio-format mp3 ^
+ %REFERER_ARG% ^
  -o "%CD%\%%(title)s.%%(ext)s" "%URL%"
 echo.
 echo MP3 saved.

@@ -40,3 +40,11 @@ env/
 .vscode/
 .idea/
 .env
+
+# Android build outputs & Gradle
+.gradle/
+android/.gradle/
+android/build/
+android/app/build/
+*.apk
+*.aar
