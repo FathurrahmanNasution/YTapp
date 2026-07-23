@@ -37,7 +37,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: YT-Downloader-Mobile-APK
-          path: android/app/build/**/*.apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          if-no-files-found: error
 
   build-windows:
     name: Build Windows Executable
@@ -80,6 +81,7 @@ jobs:
         with:
           name: YT-Downloader-Windows-EXE
           path: dist/yd_app.exe
+          if-no-files-found: error
 
   create-release:
     name: Create GitHub Release
@@ -91,22 +93,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download Android Artifact
+      - name: Download All Artifacts
         uses: actions/download-artifact@v4
         with:
-          name: YT-Downloader-Mobile-APK
           path: release-files/
 
-      - name: Download Windows Artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: YT-Downloader-Windows-EXE
-          path: release-files/
-
-      - name: Rename files for release
+      - name: Prepare Release Files
         run: |
-          find release-files/ -name "*.apk" -exec mv {} release-files/YTDownloader-Mobile.apk \;
-          find release-files/ -name "*.exe" -exec mv {} release-files/YTDownloader-Windows.exe \;
+          mkdir -p final-release/
+          find release-files/ -type f -name "*.apk" -exec cp {} final-release/YTDownloader-Mobile.apk \;
+          find release-files/ -type f -name "*.exe" -exec cp {} final-release/YTDownloader-Windows.exe \;
+          ls -la final-release/
 
       - name: Create or Update GitHub Release
         uses: softprops/action-gh-release@v2
@@ -116,7 +113,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            release-files/YTDownloader-Mobile.apk
-            release-files/YTDownloader-Windows.exe
+            final-release/YTDownloader-Mobile.apk
+            final-release/YTDownloader-Windows.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
