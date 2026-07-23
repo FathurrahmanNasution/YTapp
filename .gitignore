@@ -48,3 +48,5 @@ android/build/
 android/app/build/
 *.apk
 *.aar
+local.properties
+**/local.properties
