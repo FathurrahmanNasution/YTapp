@@ -34,16 +34,22 @@ jobs:
       - name: Build Android APK
         run: |
           cd android
-          ./gradlew assembleDebug --stacktrace
+          ./gradlew assembleDebug --stacktrace 2>&1
+          echo "Gradle exit code: $?"
 
-      - name: Find built APKs
-        run: find android -name "*.apk" -type f
+      - name: List all build outputs
+        if: always()
+        run: |
+          echo "=== Searching entire android directory for APKs ==="
+          find android/ -type f \( -name "*.apk" -o -name "*.aab" \) 2>/dev/null || echo "No APKs found"
+          echo "=== android/app/build directory ==="
+          ls -la android/app/build/ 2>/dev/null || echo "Build directory does not exist"
 
       - name: Upload Android APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: YT-Downloader-Mobile-APK
-          path: 'android/**/*.apk'
+          path: android/**/*.apk
           if-no-files-found: error
 
   build-windows:
